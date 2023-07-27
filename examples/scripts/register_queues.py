@@ -29,11 +29,13 @@ from rich.console import Console
 # The try/except ImportError blocks allow this script to be invoked using:
 #     python ./scripts/register_task_plugins.py  # OR
 #     python -m scripts.register_task_plugins
-try:
-    from .client import DioptraClient
+# try:
+#     from .client import DioptraClient
 
-except ImportError:
-    from client import DioptraClient
+# except ImportError:
+#     from client import DioptraClient
+from dioptra.client import DioptraClient
+
 
 try:
     from .utils import RichConsole
