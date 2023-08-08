@@ -31,8 +31,8 @@ def login():
         token = {
             "id": f"{user.id}",
             "username": user.name,
-            "created_at": f"{datetime.utcnow()}",
-            "expiration": f"{datetime.utcnow() + timedelta(minutes=30)}",
+            "iat": f"{datetime.utcnow()}",
+            "exp": f"{datetime.utcnow() + timedelta(minutes=30)}",
         }
         # encrypting with private key for signing
         encoded = jwt.encode(token, priv_key, algorithm="RS256")
