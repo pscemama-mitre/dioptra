@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import jwt
+from jose import jwk
 from flask import request
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -56,7 +57,4 @@ def load_user_from_request(request: request) -> None | User:
     if not encoded:
         return None
     token = jwt.decode(encoded, pub_key, algorithms="RS256")
-    expiration = datetime.strptime(token["expiration"], "%Y-%m-%d %H:%M:%S.%f")
-    if expiration < datetime.utcnow():
-        return None
     return load_user(token["id"])

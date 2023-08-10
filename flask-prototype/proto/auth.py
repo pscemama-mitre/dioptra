@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import flask
 import flask_login
@@ -31,9 +31,10 @@ def login():
         token = {
             "id": f"{user.id}",
             "username": user.name,
-            "iat": f"{datetime.utcnow()}",
-            "exp": f"{datetime.utcnow() + timedelta(minutes=30)}",
+            "iat": datetime.now(tz=timezone.utc),
+            "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=30),
         }
+        
         # encrypting with private key for signing
         encoded = jwt.encode(token, priv_key, algorithm="RS256")
         return flask.jsonify(encoded)
