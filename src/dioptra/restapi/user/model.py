@@ -64,6 +64,8 @@ class User(db.Model):
     password_expire_on: datetime.datetime = db.Column(db.DateTime(), nullable=False)
     is_deleted: bool = db.Column(db.Boolean(), nullable=False, default=False)
 
+    # Uses user_expire, _password_expire, and _last_login to check is user is logged in/ can logon in
+
     def update(self, changes: dict[str, Any]):
         """Updates the record.
 

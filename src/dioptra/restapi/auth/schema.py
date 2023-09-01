@@ -14,34 +14,24 @@
 #
 # ACCESS THE FULL CC BY 4.0 LICENSE HERE:
 # https://creativecommons.org/licenses/by/4.0/legalcode
-"""A module for registering the endpoint routes with the main application.
+"""The schemas for serializing/deserializing the auth endpoint objects.
 
-.. |Api| replace:: :py:class:`flask_restx.Api`
-.. |Flask| replace:: :py:class:`flask.Flask`
+.. |User| replace:: :py:class:`~.model.User`
+.. |UserRegistrationForm| replace:: :py:class:`~.model.UserRegistrationForm`
 """
 from __future__ import annotations
 
-from flask import Flask
-from flask_restx import Api
+from marshmallow import Schema, fields
 
 
-def register_routes(api: Api, app: Flask) -> None:
-    """Registers the endpoint routes with the main application.
-
-    Args:
-        api: The main REST |Api| object.
-        app: The main |Flask| application.
-    """
-    from .experiment import register_routes as attach_experiment
-    from .job import register_routes as attach_job
-    from .queue import register_routes as attach_job_queue
-    from .task_plugin import register_routes as attach_task_plugin
-
-    # Add routes
-
-    # activate user routes here
-
-    attach_experiment(api, app)
-    attach_job(api, app)
-    attach_job_queue(api, app)
-    attach_task_plugin(api, app)
+class LoginSchema(Schema):
+    username = fields.String(
+        attribute="username",
+        metadata=dict(description="The username for logging into the user account."),
+    )
+    password = fields.String(
+        attribute="password",
+        metadata=dict(
+            description="The password used for authenticating the user account."
+        ),
+    )
