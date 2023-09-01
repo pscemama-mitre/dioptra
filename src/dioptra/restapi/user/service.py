@@ -96,6 +96,23 @@ class UserService(object):
 
         return [user_id]
 
+    def authenticate_user(
+        self, 
+        name: str, 
+        password: str,
+        **kwargs,
+    ) -> User | None:
+        log: BoundLogger = kwargs.get("log", LOGGER.new())
+        for user in self.get_all():
+            if user.username == name:
+                if self._password_service.verify(
+                    password=password, hashed_password=user.password
+                ):
+                    return user
+                break
+
+        return None
+
     @staticmethod
     def get_all(**kwargs) -> list[User]:
         log: BoundLogger = kwargs.get("log", LOGGER.new())
