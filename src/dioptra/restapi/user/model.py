@@ -80,6 +80,18 @@ class User(db.Model):
 
         return self
 
+    def is_authenticated(self) -> bool:
+        return True
+
+    def is_active(self) -> bool:
+        return True
+
+    def is_anonymous(self) -> bool:
+        return False
+
+    def get_id(self) -> str:
+        return str(self.user_id)
+
 
 class UserRegistrationForm(FlaskForm):
     """The user registration form.
