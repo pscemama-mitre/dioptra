@@ -56,8 +56,7 @@ class LoginResource(Resource):
         log: BoundLogger = LOGGER.new(
             request_id=str(uuid.uuid4()), resource="auth", request_type="POST"
         )
-        return self._auth_service.login(data=request.parsed_obj, log=log)
-        # return self._auth_service.login(login_data=request.parsed_obj, log=log)
+        return self._auth_service.login(login_data=request.parsed_obj, log=log)
 
 @api.route("/logout")
 class LogoutResource(Resource):

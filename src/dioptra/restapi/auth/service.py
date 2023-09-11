@@ -44,16 +44,13 @@ class AuthService(object):
 
     def login(
         self, 
-        data: dict[str, Any],
-        # login_data: LoginData,
+        login_data: LoginData,
         **kwargs,
     ) -> Response:
     # ) -> Response | tuple[Response, int]:
         log: BoundLogger = kwargs.get("log", LOGGER.new())
-        username = data.get("username", "guest")
-        password = data.get("password", "")
-        # username = login_data.get("username", "guest")
-        # password = login_data.get("password", "")
+        username = login_data.get("username", "guest")
+        password = login_data.get("password", "")
         user = self._user_service.authenticate_user(name=username, password=password)
 
         if not user:

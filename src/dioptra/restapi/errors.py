@@ -29,6 +29,7 @@ def register_error_handlers(api: Api) -> None:
     Args:
         api: The main REST |Api| object.
     """
+    from .auth import register_error_handlers as attach_auth_error_handlers
     from .experiment import register_error_handlers as attach_experiment_error_handlers
     from .job import register_error_handlers as attach_job_error_handlers
     from .queue import register_error_handlers as attach_job_queue_error_handlers
@@ -38,6 +39,7 @@ def register_error_handlers(api: Api) -> None:
     from .user import register_error_handlers as attach_user_error_handlers
 
     # Add error handlers
+    attach_auth_error_handlers(api)
     attach_experiment_error_handlers(api)
     attach_job_error_handlers(api)
     attach_job_queue_error_handlers(api)
