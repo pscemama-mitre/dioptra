@@ -103,14 +103,11 @@ class UserService(object):
         **kwargs,
     ) -> User | None:
         log: BoundLogger = kwargs.get("log", LOGGER.new())
-        for user in self.get_all():
-            if user.username == name:
-                if self._password_service.verify(
-                    password=password, hashed_password=user.password
-                ):
-                    return user
-                break
-
+        user = self.get_by_username(name)
+        if self._password_service.verify(
+            password=password, hashed_password=user.password
+        ):
+            return user
         return None
 
     @staticmethod
