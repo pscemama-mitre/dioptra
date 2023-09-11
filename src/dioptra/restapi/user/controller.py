@@ -23,6 +23,7 @@ import structlog
 from flask import jsonify
 from flask.wrappers import Response
 from flask_accepts import accepts, responds
+from flask_login import login_required
 from flask_restx import Namespace, Resource
 from injector import inject
 from structlog.stdlib import BoundLogger
@@ -51,6 +52,7 @@ class UserResource(Resource):
         self._user_service = user_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     @responds(schema=UserSchema(many=True), api=api)
     def get(self) -> list[User]:
         """Gets a list of all registered users."""
@@ -97,6 +99,7 @@ class UserIdResource(Resource):
         self._user_service = user_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     @responds(schema=UserSchema, api=api)
     def get(self, userId: int) -> User:
         """Gets user account by its unique identifier."""
@@ -112,6 +115,7 @@ class UserIdResource(Resource):
 
         return user
 
+    @login_required
     def delete(self, userId: int) -> Response:
         """Deletes user account by its unique identifier."""
         log: BoundLogger = LOGGER.new(
