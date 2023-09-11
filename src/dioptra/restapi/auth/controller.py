@@ -23,6 +23,7 @@ import structlog
 from flask import request
 from flask.wrappers import Response
 from flask_accepts import accepts
+from flask_login import login_required
 from flask_restx import Namespace, Resource
 from injector import inject
 from structlog.stdlib import BoundLogger
@@ -58,7 +59,6 @@ class LoginResource(Resource):
         return self._auth_service.login(data=request.parsed_obj, log=log)
         # return self._auth_service.login(login_data=request.parsed_obj, log=log)
 
-
 @api.route("/logout")
 class LogoutResource(Resource):
 
@@ -67,6 +67,7 @@ class LogoutResource(Resource):
         self._auth_service = auth_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     def post(self) -> Response:
         """Attempts to logout the current user."""
         log: BoundLogger = LOGGER.new(

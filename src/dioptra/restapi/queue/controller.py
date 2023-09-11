@@ -24,6 +24,7 @@ import structlog
 from flask import jsonify, request
 from flask.wrappers import Response
 from flask_accepts import accepts, responds
+from flask_login import login_required
 from flask_restx import Namespace, Resource
 from injector import inject
 from structlog.stdlib import BoundLogger
@@ -53,6 +54,7 @@ class QueueResource(Resource):
         self._queue_service = queue_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     @responds(schema=QueueSchema(many=True), api=api)
     def get(self) -> List[Queue]:
         """Gets a list of all registered queues."""
@@ -62,6 +64,7 @@ class QueueResource(Resource):
         log.info("Request received")
         return self._queue_service.get_all_unlocked(log=log)
 
+    @login_required
     @api.expect(as_api_parser(api, QueueRegistrationSchema))
     @accepts(QueueRegistrationSchema, api=api)
     @responds(schema=QueueSchema, api=api)
@@ -99,6 +102,7 @@ class QueueIdResource(Resource):
         self._queue_service = queue_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     @responds(schema=QueueSchema, api=api)
     def get(self, queueId: int) -> Queue:
         """Gets a queue by its unique identifier."""
@@ -114,6 +118,7 @@ class QueueIdResource(Resource):
 
         return queue
 
+    @login_required
     def delete(self, queueId: int) -> Response:
         """Deletes a queue by its unique identifier."""
         log: BoundLogger = LOGGER.new(
@@ -124,6 +129,7 @@ class QueueIdResource(Resource):
 
         return jsonify(dict(status="Success", id=id))
 
+    @login_required
     @accepts(schema=QueueNameUpdateSchema, api=api)
     @responds(schema=QueueSchema, api=api)
     def put(self, queueId: int) -> Queue:
@@ -155,6 +161,7 @@ class QueueIdLockResource(Resource):
         self._queue_service = queue_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     def delete(self, queueId: int) -> Response:
         """Removes the lock from the queue (id reference) if it exists."""
         log: BoundLogger = LOGGER.new(
@@ -171,6 +178,7 @@ class QueueIdLockResource(Resource):
 
         return jsonify(dict(status="Success", id=id))
 
+    @login_required
     def put(self, queueId: int) -> Queue:
         """Locks the queue (id reference) if it is unlocked."""
         log: BoundLogger = LOGGER.new(
@@ -198,6 +206,7 @@ class QueueNameResource(Resource):
         self._queue_service = queue_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     @responds(schema=QueueSchema, api=api)
     def get(self, queueName: str) -> Queue:
         """Gets a queue by its unique name."""
@@ -215,6 +224,7 @@ class QueueNameResource(Resource):
 
         return queue
 
+    @login_required
     def delete(self, queueName: str) -> Response:
         """Deletes a queue by its unique name."""
         log: BoundLogger = LOGGER.new(
@@ -235,6 +245,7 @@ class QueueNameResource(Resource):
 
         return jsonify(dict(status="Success", id=id))
 
+    @login_required
     @accepts(schema=QueueNameUpdateSchema, api=api)
     @responds(schema=QueueSchema, api=api)
     def put(self, queueName: str) -> Queue:
@@ -268,6 +279,7 @@ class QueueNameLockResource(Resource):
         self._queue_service = queue_service
         super().__init__(*args, **kwargs)
 
+    @login_required
     def delete(self, queueName: str) -> Response:
         """Removes the lock from the queue (name reference) if it exists."""
         log: BoundLogger = LOGGER.new(
@@ -287,6 +299,7 @@ class QueueNameLockResource(Resource):
 
         return jsonify(dict(status="Success", name=name))
 
+    @login_required
     def put(self, queueName: str) -> Queue:
         """Locks the queue (name reference) if it is unlocked."""
         log: BoundLogger = LOGGER.new(
