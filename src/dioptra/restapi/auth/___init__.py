@@ -14,29 +14,15 @@
 #
 # ACCESS THE FULL CC BY 4.0 LICENSE HERE:
 # https://creativecommons.org/licenses/by/4.0/legalcode
-"""Binding configurations to shared services using dependency injection."""
-from __future__ import annotations
+"""The auth endpoint subpackage."""
 
-from dataclasses import dataclass
-from typing import Any, Callable
+from .dependencies import bind_dependencies, register_providers
+from .errors import register_error_handlers
+from .routes import register_routes
 
-from injector import Binder, Module, provider
-
-
-def bind_dependencies(binder: Binder) -> None:
-    """Binds interfaces to implementations within the main application.
-
-    Args:
-        binder: A :py:class:`~injector.Binder` object.
-    """
-    pass
-
-
-def register_providers(modules: list[Callable[..., Any]]) -> None:
-    """Registers type providers within the main application.
-
-    Args:
-        modules: A list of callables used for configuring the dependency injection
-            environment.
-    """
-    pass
+__all__ = [
+    "bind_dependencies",
+    "register_error_handlers",
+    "register_providers",
+    "register_routes",
+]
