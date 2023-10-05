@@ -19,12 +19,28 @@ from __future__ import annotations
 
 from flask_restx import Api
 
+class LoginError(Exception):
+    """Failed login."""
 
 class LogoutError(Exception):
     """The current user was not logged out."""
 
 
 def register_error_handlers(api: Api) -> None:
+    @api.errorhander(LoginError)
+    def handle_login_error(error):
+        return (
+            {
+                "message": "Failed to login with provided credentials."
+            }, 
+            401
+        )
+    
     @api.errorhandler(LogoutError)
     def handle_logout_error(error):
-        return {"message": "Internal Service Error - The current user was not logged out."}, 500
+        return (
+            {
+                "message": "Internal Service Error - The current user was not logged out."
+            },
+            500
+        )

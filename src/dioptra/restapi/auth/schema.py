@@ -24,7 +24,7 @@ from __future__ import annotations
 from marshmallow import Schema, fields
 
 
-class LoginSchema(Schema):
+class LoginRequestSchema(Schema):
     username = fields.String(
         attribute="username",
         metadata=dict(description="The username for logging into the user account."),
@@ -34,4 +34,21 @@ class LoginSchema(Schema):
         metadata=dict(
             description="The password used for authenticating the user account."
         ),
+    )
+
+class LogoutRequestSchema(Schema):
+    everywhere = fields.Bool(
+        attribute="everywhere",
+        metadata=dict(description="If True, log out from all devices."),
+        load_default=lambda: False,
+    )
+
+class LoginResponseSchema(Schema):
+    message = fields.String(
+        metadata=dict(description="Login successful.")
+    )
+
+class LogoutResponseSchema(Schema):
+    message = fields.String(
+        metadata=dict(description="Logout successful.")
     )

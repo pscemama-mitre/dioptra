@@ -28,7 +28,8 @@ from structlog.stdlib import BoundLogger
 from dioptra.restapi.user.service import UserService
 from dioptra.restapi.user.errors import UserDoesNotExistError
 
-from .errors import LogoutError
+from .errors import LoginError, LogoutError
+from .model import LoginData
 
 LOGGER: BoundLogger = structlog.stdlib.get_logger()
 
@@ -38,7 +39,7 @@ class AuthService(object):
     @inject
     def __init__(
         self, 
-        user_service: UserService,
+        user_service: UserService, # If controller not found thenn injection failed and need to update dependencies to handle UserService
     ) -> None:
         self._user_service = user_service
 
@@ -47,7 +48,6 @@ class AuthService(object):
         login_data: LoginData,
         **kwargs,
     ) -> Response:
-    # ) -> Response | tuple[Response, int]:
         log: BoundLogger = kwargs.get("log", LOGGER.new())
         username = login_data.get("username", "guest")
         password = login_data.get("password", "")
@@ -55,11 +55,7 @@ class AuthService(object):
 
         if not user:
             log.info("The requested user does not exist.", username=username)
-            raise UserDoesNotExistError
-            # return (
-            #     jsonify({"status": 401, "message": "Username or Password Error"}),
-            #     401,
-            # )
+            raise LoginError
 
         login_user(user)
 

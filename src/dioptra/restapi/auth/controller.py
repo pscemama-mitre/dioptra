@@ -22,7 +22,7 @@ import uuid
 import structlog
 from flask import request
 from flask.wrappers import Response
-from flask_accepts import accepts
+from flask_accepts import accepts, responds
 from flask_login import login_required
 from flask_restx import Namespace, Resource
 from injector import inject
@@ -30,7 +30,7 @@ from structlog.stdlib import BoundLogger
 
 from dioptra.restapi.utils import as_api_parser
 
-from .schema import LoginSchema
+from .schema import LoginRequestSchema, LogoutRequestSchema, LoginResponseSchema, LogoutResponseSchema
 from .service import AuthService
 
 LOGGER: BoundLogger = structlog.stdlib.get_logger()
@@ -49,8 +49,9 @@ class LoginResource(Resource):
         self._auth_service = auth_service
         super().__init__(*args, **kwargs)
 
-    @api.expect(as_api_parser(api, LoginSchema))
-    @accepts(schema=LoginSchema, api=auth_api)
+    @api.expect(as_api_parser(api, LoginRequestSchema))
+    @accepts(schema=LoginRequestSchema, api=api)
+    @responds(schema=LoginResponseSchema, api=api)
     def post(self) -> Response:
         """Attempts to login a user with the provide credentials."""
         log: BoundLogger = LOGGER.new(
@@ -67,6 +68,9 @@ class LogoutResource(Resource):
         super().__init__(*args, **kwargs)
 
     @login_required
+    @api.expect(as_api_parser(api, LogoutRequestSchema))
+    @accepts(query_params_schema=LogoutRequestSchema, api=api)
+    @responds(schema=LogoutResponseSchema, api=api)
     def post(self) -> Response:
         """Attempts to logout the current user."""
         log: BoundLogger = LOGGER.new(
