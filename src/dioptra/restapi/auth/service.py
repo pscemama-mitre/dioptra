@@ -64,7 +64,7 @@ class AuthService(object):
             user_id=user.user_id,
         )
 
-        return jsonify({"status": 200, "message": "login success"})
+        return {"status": 200, "message": "Login successful."}
 
     def logout(
         self, 
@@ -91,4 +91,4 @@ class AuthService(object):
             "Logout Successful"
         )
 
-        return jsonify({"status": 200, "message": "logout success"})
+        return {"status": 200, "message": "Logout successful."}

@@ -31,9 +31,7 @@ class LoginRequestSchema(Schema):
     )
     password = fields.String(
         attribute="password",
-        metadata=dict(
-            description="The password used for authenticating the user account."
-        ),
+        metadata=dict(description="The password used for authenticating the user account."),
     )
 
 class LogoutRequestSchema(Schema):
@@ -44,11 +42,21 @@ class LogoutRequestSchema(Schema):
     )
 
 class LoginResponseSchema(Schema):
+    status = fields.Int(
+        attribute="status",
+        metadata=dict(description="The repsonse code for a successful login request."),
+    )
     message = fields.String(
-        metadata=dict(description="Login successful.")
+        attribute="message",
+        metadata=dict(description="A successful login message."),
     )
 
 class LogoutResponseSchema(Schema):
+    status = fields.Int(
+        attribute="status",
+        metadata=dict(description="The repsonse code for a successful logout request."),
+    )
     message = fields.String(
-        metadata=dict(description="Logout successful.")
+        attribute="message",
+        metadata=dict(description="A successful logout message."),
     )
