@@ -37,10 +37,10 @@ jobs:
           - "mypy"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -54,7 +54,7 @@ jobs:
         run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
 
       - name: cache dependencies
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml', '**/tox.ini') }}
@@ -68,9 +68,10 @@ jobs:
         run: python3 -m tox run -e ${{ matrix.tox-testenv }}
 
   unit-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: ["ubuntu-20.04", "windows-latest"]
         python-version: ["3.9", "3.10"]
         tox-testenv:
           - "clean,py39-pytest-cov,report"
@@ -88,13 +89,14 @@ jobs:
             tox-testenv: "py39-cookiecutter"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: install English words dictionary
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
         run: sudo apt install -y wamerican
 
       - name: setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -104,19 +106,35 @@ jobs:
           python3 -m pip install --upgrade pip
 
       - name: get pip cache dir
+        if: ${{ matrix.os != 'windows-latest' }}
         id: pip-cache
         run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
 
+      - name: get pip cache dir (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        id: pip-cache-win
+        run: echo "dir=$(pip cache dir)" >> $env:GITHUB_OUTPUT
+
       - name: cache dependencies
-        uses: actions/cache@v3.3.1
+        if: ${{ matrix.os != 'windows-latest' }}
+        uses: actions/cache@v3.3.2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml', '**/tox.ini') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - name: cache dependencies (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: actions/cache@v3.3.2
+        with:
+          path: ${{ steps.pip-cache-win.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml', '**/tox.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: install dependencies
-        run: python3 -m pip install tox
+        run: python3 -m pip install --upgrade tox
 
       - name: run tox
         run: python3 -m tox run -e ${{ matrix.tox-testenv }}

@@ -19,6 +19,9 @@ name: pip-compile runs
 on:
   schedule:
     - cron: "10 1 * * *" # at 1:10am every day
+  push:
+    branches:
+      - "**"
 
 jobs:
   pip-compile:
@@ -34,10 +37,10 @@ jobs:
           - "requirements-dev-tensorflow"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -58,7 +61,7 @@ jobs:
 
       - name: cache dependencies
         if: ${{ matrix.os != 'windows-latest' }}
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml', '**/tox.ini', 'requirements-dev*.in') }}
@@ -67,7 +70,7 @@ jobs:
 
       - name: cache dependencies (Windows)
         if: ${{ matrix.os == 'windows-latest' }}
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ${{ steps.pip-cache-win.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml', '**/tox.ini', 'requirements-dev*.in') }}
@@ -129,10 +132,10 @@ jobs:
           - "tensorflow2-gpu-requirements"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: setup python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.7.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -146,7 +149,7 @@ jobs:
         run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
 
       - name: cache dependencies
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml', '**/tox.ini', '**/requirements-dev*.in', '**/docker/pip-tools/*-requirements.in') }}
@@ -177,16 +180,16 @@ jobs:
           - "py39-linux-aarch64-mlflow-tracking-requirements"
           - "py39-linux-aarch64-restapi-requirements"
           - "py39-linux-aarch64-pytorch-cpu-requirements"
-          # - "py39-linux-aarch64-tensorflow2-cpu-requirements"
+          - "py39-linux-aarch64-tensorflow2-cpu-requirements"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: set up docker qemu
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: set up docker buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: setup dockerfile and output folder
         run: |
@@ -200,7 +203,7 @@ jobs:
           sudo chmod 0777 /image
 
       - name: build and save to output folder
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/arm64
