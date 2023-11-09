@@ -57,7 +57,7 @@ class Group(db.Model):
         if group is None:
             return 1
 
-        return int(group.id) + 1
+        return int(group.group_id) + 1
 
     @property
     def users(self):
