@@ -178,7 +178,7 @@ def assert_retrieving_all_task_plugins_works(
     assert response.status_code == 200 and response.get_json() == expected
 
 
-def assert_registering_existing_queue_name_fails(
+def assert_registering_existing_task_plugin_name_fails(
     client: FlaskClient, 
     task_plugin_name: str, 
     task_plugin_file: Any, 
@@ -266,7 +266,7 @@ def test_task_plugin_registration(client: FlaskClient, db: SQLAlchemy) -> None:
     assert_retrieving_builtins_task_plugin_by_name_works(
         client, task_plugin_name=plugin1_expected["taskPluginName"], expected=plugin1_expected
     )
-    assert_retrieving_buitlins_task_plugin_by_name_works(
+    assert_retrieving_builtins_task_plugin_by_name_works(
         client, task_plugin_name=plugin2_expected["taskPluginName"], expected=plugin2_expected
     )
     assert_retrieving_custom_task_plugin_by_name_works(
