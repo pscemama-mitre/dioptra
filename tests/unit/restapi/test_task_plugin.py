@@ -37,7 +37,7 @@ from dioptra.restapi.task_plugin.routes import BASE_ROUTE as TASK_PLUGIN_BASE_RO
 
 
 @pytest.fixture
-def task_plugin_builtin_request_form(task_plugin_name: str, task_plugin_archive: BinaryIO) -> Dict[str, Any]:
+def task_plugin_builtin_request_form(task_plugin_archive: BinaryIO) -> Dict[str, Any]:
     return {
         "task_plugin_name": "builtin_plugin",
         "task_plugin_file": task_plugin_archive,
@@ -45,7 +45,7 @@ def task_plugin_builtin_request_form(task_plugin_name: str, task_plugin_archive:
     }
 
 @pytest.fixture
-def task_plugin_custom_request_form(task_plugin_name: str, task_plugin_archive: BinaryIO) -> Dict[str, Any]:
+def task_plugin_custom_request_form(task_plugin_archive: BinaryIO) -> Dict[str, Any]:
     return {
         "task_plugin_name": "custom_plugin",
         "task_plugin_file": task_plugin_archive,
