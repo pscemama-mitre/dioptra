@@ -40,7 +40,7 @@ from dioptra.restapi.task_plugin.routes import BASE_ROUTE as TASK_PLUGIN_BASE_RO
 def task_plugin_builtin_request_form(task_plugin_archive: BinaryIO) -> Dict[str, Any]:
     return {
         "task_plugin_name": "builtin_plugin",
-        "task_plugin_file": task_plugin_archive,
+        "task_plugin_file": (task_plugin_archive, "task_plugin_new_builtin_package.tar.gz"),
         "collection": "dioptra_builtins"
     }
 
@@ -48,7 +48,7 @@ def task_plugin_builtin_request_form(task_plugin_archive: BinaryIO) -> Dict[str,
 def task_plugin_custom_request_form(task_plugin_archive: BinaryIO) -> Dict[str, Any]:
     return {
         "task_plugin_name": "custom_plugin",
-        "task_plugin_file": task_plugin_archive,
+        "task_plugin_file": (task_plugin_archive, "task_plugin_new_custom_package.tar.gz"),
         "collection": "dioptra_custom"
     }
 
@@ -74,7 +74,7 @@ def register_task_plugin(
     """
     return client.post(
         f"/api/{TASK_PLUGIN_BASE_ROUTE}/",
-        json=task_plugin_request_form,
+        data=task_plugin_request_form,
         follow_redirects=True,
     )
 
