@@ -28,7 +28,18 @@ from dioptra.restapi.v1.schemas import (
     generate_base_resource_schema,
 )
 
+# only use load only and dump only if necessary
+# load only means the attribute is only used when creating the object
+# dump only means the attribute is only used as a response
 
+# fields.nested is used when mixing in other schemas
+
+# standardize on the descriptions used here, for the most part changing only object
+#   names
+
+
+# used whenever another resource needs the Queue object to hydrate it's response.
+# rule for refs: primary key (Id and Group), natural key (name usually), url
 class QueueRefSchema(Schema):
     """The reference schema for the data stored in a Queue resource."""
 
@@ -52,6 +63,7 @@ class QueueRefSchema(Schema):
     )
 
 
+# used to handle PUTS
 class QueueMutableFieldsSchema(Schema):
     """The fields schema for the mutable data in a Queue resource."""
 
@@ -64,13 +76,19 @@ class QueueMutableFieldsSchema(Schema):
     )
 
 
+# for the moment wil never be passed to the controller
 QueueBaseSchema = generate_base_resource_schema("Queue")
 
 
+# full schema to be used with both accepts and responds, for POST
+# Used in the Query response to handle GET
+# The order of inheritance matters, where fields from the first schema
+# appear at the bottom.
 class QueueSchema(QueueMutableFieldsSchema, QueueBaseSchema):  # type: ignore
     """The schema for the data stored in a Queue resource."""
 
 
+# only change the Resource type in Class name, docstring, and data
 class QueuePageSchema(BasePageSchema):
     """The paged schema for the data stored in a Queue resource."""
 
@@ -81,6 +99,7 @@ class QueuePageSchema(BasePageSchema):
     )
 
 
+# used for Get requests
 class QueueGetQueryParameters(
     PagingQueryParametersSchema,
     GroupIdQueryParametersSchema,

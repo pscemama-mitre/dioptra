@@ -20,6 +20,7 @@ from __future__ import annotations
 from marshmallow import Schema, fields
 
 
+# rule for refs: primary key (Id), natural key (name usually), url
 class UserRefSchema(Schema):
     """The reference schema for the data stored in a User resource."""
 

@@ -20,6 +20,7 @@ from __future__ import annotations
 from marshmallow import Schema, fields
 
 
+# rule for refs: primary key (Id and Group), natural key (name usually), url
 class TagRefSchema(Schema):
     """The reference schema for the data stored in a Tag."""
 

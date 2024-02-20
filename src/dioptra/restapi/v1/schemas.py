@@ -29,50 +29,50 @@ def generate_base_resource_schema(name: str) -> type[Schema]:
 
     return Schema.from_dict(
         {
-            "id": fields.Integer(
+            "id": fields.Integer(  # id is the same as resource id
                 attribute="id",
                 metadata=dict(description=f"ID for the {name} resource."),
                 dump_only=True,
             ),
-            "snapshotId": fields.Integer(
+            "snapshotId": fields.Integer(  # only exists on snapshot types
                 attribute="snapshot_id",
                 metadata=dict(description=f"ID for the underlying {name} snapshot."),
                 dump_only=True,
             ),
-            "groupId": fields.Integer(
+            "groupId": fields.Integer(  # is only used during creation of a Queue
                 attribute="group_id",
                 metadata=dict(
                     description=f"ID of the Group that will own the {name} resource."
                 ),
                 load_only=True,
             ),
-            "group": fields.Nested(
-                GroupRefSchema,
+            "group": fields.Nested(  # is only returned as a response,
+                GroupRefSchema,  # after creation using groupID
                 attribute="group",
                 metadata=dict(description=f"Group that owns the {name} resource."),
                 dump_only=True,
             ),
-            "user": fields.Nested(
+            "user": fields.Nested(  # hydrated, user is set based on the logged in user
                 UserRefSchema,
                 attribute="user",
                 metadata=dict(description=f"User that created the {name} resource."),
                 dump_only=True,
             ),
-            "createdOn": fields.DateTime(
+            "createdOn": fields.DateTime(  # inferred from the underlying resource
                 attribute="created_on",
                 metadata=dict(
                     description=f"Timestamp when the {name} resource was created."
                 ),
                 dump_only=True,
             ),
-            "lastModifiedOn": fields.DateTime(
+            "lastModifiedOn": fields.DateTime(  # inferred from underlying snapshot
                 attribute="last_modified_on",
                 metadata=dict(
                     description=f"Timestamp when the {name} resource was last modified."
                 ),
                 dump_only=True,
             ),
-            "tags": fields.Nested(
+            "tags": fields.Nested(  # hydrated field
                 TagRefSchema,
                 attribute="tags",
                 metadata=dict(description="Tags associated with the {name} resource."),
@@ -108,6 +108,7 @@ class BasePageSchema(Schema):
     )
 
 
+# to be used when an endpoint returns a paged response
 class PagingQueryParametersSchema(Schema):
     """A schema for adding paging query parameters to a resource endpoint."""
 
@@ -123,6 +124,7 @@ class PagingQueryParametersSchema(Schema):
     )
 
 
+# to be used as a mixin when a endpoint has an R path param
 class ResourceTypeQueryParametersSchema(Schema):
     """A schema for adding resource_type query parameters to a resource endpoint."""
 
@@ -132,6 +134,7 @@ class ResourceTypeQueryParametersSchema(Schema):
     )
 
 
+# to be used as a mixin when a endpoint has an G path param
 class GroupIdQueryParametersSchema(Schema):
     """A schema for adding group_id query parameters to a resource endpoint."""
 
@@ -141,6 +144,7 @@ class GroupIdQueryParametersSchema(Schema):
     )
 
 
+# to be used as a mixin when a endpoint has an Q path param
 class SearchQueryParametersSchema(Schema):
     """A schema for adding search query parameters to a resource endpoint."""
 
@@ -154,6 +158,7 @@ class SearchQueryParametersSchema(Schema):
     )
 
 
+# most often used in Delete endpoints
 class IdStatusResponseSchema(Schema):
     """A simple response for reporting a status for one or more resources."""
 
