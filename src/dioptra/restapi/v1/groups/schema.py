@@ -71,18 +71,18 @@ class MemberSchema(MemberMutableFieldsSchema):
     group = fields.Nested(
         GroupRefSchema,
         attribute="group",
-        metadata=dict(description="The Group Resource of which the User is a member.")
+        metadata=dict(description="The Group Resource of which the User is a member."),
     )
 
 
 class ManagerMutableFieldsSchema(Schema):
     """The fields schema of mutable data of a Group Manager."""
 
-    owner= fields.Boolean(
+    owner = fields.Boolean(
         attribute="owner",
         metadata=dict(description="Flag for if the Manager is a Group owner."),
     )
-    admin= fields.Boolean(
+    admin = fields.Boolean(
         attribute="admin",
         metadata=dict(description="Flag for if the Maanger is a Group admin."),
     )
