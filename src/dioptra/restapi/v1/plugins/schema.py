@@ -59,6 +59,28 @@ class PluginFileRefSchema(PluginFileRefBaseSchema):  # type: ignore
     )
 
 
+class PluginTaskParameterSchema(Schema):
+    """The schema for the data stored in a PluginTaskParameter"""
+
+    name = fields.String(
+        attribute="name",
+        metadata=dict(description="Name of the PluginTaskParameter."),
+    )
+    parameterTypeId = fields.String(
+        attribute="parameter_type_id",
+        metadata=dict(
+            description="The ID of the assigned PluginParameterType resource"
+        ),
+        load_only=True,
+    )
+    parameterType = fields.Nested(
+        PluginParameterTypeRefSchema,
+        attribute="parameter_type",
+        metadata=dict(description="The assigned PluginParameterType resource."),
+        dump_only=True,
+    )
+
+
 class PluginTaskSchema(Schema):
     """The schema for the data stored in a PluginTask."""
 
@@ -66,19 +88,15 @@ class PluginTaskSchema(Schema):
         attribute="name",
         metadata=dict(description="Name of the PluginTask."),
     )
-    number = fields.Integer(
-        attribute="number",
-        metadata=dict(description="The positional order of the parameter."),
-    )
     inputParams = fields.Nested(
-        PluginParameterTypeRefSchema,
+        PluginTaskParameterSchema,
         many=True,
         metadata=dict(
             description="List of input PluginTaskParameters in this PluginTask."
         ),
     )
     outputParams = fields.Nested(
-        PluginParameterTypeRefSchema,
+        PluginTaskParameterSchema,
         many=True,
         metadata=dict(
             description="List of output PluginTaskParameters in this PluginTask."
@@ -143,6 +161,12 @@ class PluginFileMutableFieldsSchema(Schema):
 
 class PluginFileSchema(PluginFileMutableFieldsSchema, PluginFileBaseSchema):  # type: ignore
     """The schema for the data stored in a PluginFile resource."""
+
+    pluginId = fields.Int(
+        attribute="plugin_id",
+        metadata=dict(description="ID for the Plugin resource this file belongs to."),
+        dump_only=True,
+    )
 
     tasks = fields.Nested(
         PluginTaskSchema,

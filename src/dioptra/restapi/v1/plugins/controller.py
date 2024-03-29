@@ -112,7 +112,7 @@ class PluginIdFilesEndpoint(Resource):
     @accepts(PluginFileGetQueryParameters, api=api)
     @responds(schema=PluginFilePageSchema, api=api)
     def get(self, id: int):
-        """Gets the PluginFile resources for a Plugin resource."""
+        """Gets a list of al PluginFile resources for a Plugin resource."""
         log = LOGGER.new(
             request_id=str(uuid.uuid4()),
             resource="PluginFile",
@@ -137,7 +137,7 @@ class PluginIdFilesEndpoint(Resource):
     @accepts(schema=PluginFileSchema, api=api)
     @responds(schema=PluginFileSchema, api=api)
     def post(self):
-        """Creates a Plugin resource."""
+        """Creates a PluginFile resource."""
         log = LOGGER.new(
             request_id=str(uuid.uuid4()), resource="PluginFile", request_type="POST"
         )
