@@ -41,9 +41,16 @@ class RegisteredModelSchema(Schema):
         metadata=dict(description="The version number of the Registered Model."),
         dump_only=True,
     )
+    artifactId = fields.Integer(
+        attribute="artifact_id",
+        metadata=dict(description="The artifact registered as the Registered Model."),
+        load_only=True,
+    )
     artifact = fields.Nested(
         ArtifactRefSchema,
+        attribute="artifact",
         metadata=dict(description="The artifact registered as the Registered Model."),
+        dump_only=True,
     )
 
 
