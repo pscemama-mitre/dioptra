@@ -83,9 +83,9 @@ class ModelSchema(ModelBaseSchema):  # type: ignore
         attribute="name",
         metadata=dict(description="Name of the Model resource."),
     )
-    lastVersion = fields.Nested(
+    registeredModel = fields.Nested(
         RegisteredModelSchema,
-        attribute="last_version",
+        attribute="registered_model",
         metadata=dict(description="The latest version of the Model resource."),
     )
 
