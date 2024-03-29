@@ -17,7 +17,7 @@
 """The schemas for serializing/deserializing Model resources."""
 from __future__ import annotations
 
-from marshmallow import fields
+from marshmallow import Schema, fields
 
 from dioptra.restapi.v1.artifacts.schema import ArtifactRefSchema
 from dioptra.restapi.v1.schemas import (
@@ -27,12 +27,8 @@ from dioptra.restapi.v1.schemas import (
     generate_base_resource_schema,
 )
 
-RegisteredModelBaseSchema = generate_base_resource_schema(
-    "RegisteredModel", snapshot=False
-)
 
-
-class RegisteredModelSchema(RegisteredModelBaseSchema):  # type: ignore
+class RegisteredModelSchema(Schema):
     """The schema for the data stored in a Registered Model resource."""
 
     modelId = fields.Integer(
