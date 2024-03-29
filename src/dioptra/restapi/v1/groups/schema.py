@@ -14,12 +14,16 @@
 #
 # ACCESS THE FULL CC BY 4.0 LICENSE HERE:
 # https://creativecommons.org/licenses/by/4.0/legalcode
-"""The schemas for serializing/deserializing Group resources."""
+"""The schemas for serializing/deserializing Group resource."""
 from __future__ import annotations
 
 from marshmallow import Schema, fields
 
-from dioptra.restapi.v1.users.schema import UserRefSchema
+from dioptra.restapi.v1.schemas import (
+    BasePageSchema,
+    PagingQueryParametersSchema,
+    SearchQueryParametersSchema,
+)
 
 
 class GroupRefSchema(Schema):
@@ -39,48 +43,52 @@ class GroupRefSchema(Schema):
     )
 
 
-class MemberMutableFieldsSchema(Schema):
-    """The fields schema of mutable data of a Group Member."""
-
-    read = fields.Boolean(
-        attribute="read",
-        metadata=dict(description="Permission for member to read Group Resources."),
-    )
-    write = fields.Boolean(
-        attribute="write",
-        metadata=dict(description="Permission for member to modify Group Resources."),
-    )
-    shareRead = fields.Boolean(
-        attribute="share_read",
-        metadata=dict(
-            description="Permission for member to share read-only Group Resources."
-        ),
-    )
-    shareWrite = fields.Boolean(
-        attribute="share_write",
-        metadata=dict(
-            description="Permission for member to share read+write Group Resources."
-        ),
-    )
-
-
-class MemberSchema(MemberMutableFieldsSchema):
+class UserGroupBaseSchema(Schema):
     """The fields schema of a Group Member."""
+
+    from dioptra.restapi.v1.users.schema import UserRefSchema
 
     user = fields.Nested(
         UserRefSchema,
         attribute="user",
-        metadata=dict(description="User that is a member of the Group resource."),
+        metadata=dict(description="User that is a member of the Group."),
+        dump_only=True,
     )
     group = fields.Nested(
         GroupRefSchema,
         attribute="group",
-        metadata=dict(description="The Group Resource of which the User is a member."),
+        metadata=dict(description="The Group of which the User is a member."),
+        dump_only=True,
     )
 
 
-class ManagerSchema(MemberSchema):
-    """The fields schema of a Group Manager."""
+class GroupMemberMutableFieldsSchema(Schema):
+    """The mutable fields schema of a Group Member."""
+
+    read = fields.Boolean(
+        attribute="read",
+        metadata=dict(description="Permission for member to read Group."),
+    )
+    write = fields.Boolean(
+        attribute="write",
+        metadata=dict(description="Permission for member to modify Group."),
+    )
+    shareRead = fields.Boolean(
+        attribute="share_read",
+        metadata=dict(description="Permission for member to share read-only Group."),
+    )
+    shareWrite = fields.Boolean(
+        attribute="share_write",
+        metadata=dict(description="Permission for member to share read+write Group."),
+    )
+
+
+class GroupMemberSchema(GroupMemberMutableFieldsSchema, UserGroupBaseSchema):
+    """The schema for a Group Member"""
+
+
+class GroupManagerMutableFieldsSchema(Schema):
+    """The mutable fields schema of a Group Manager."""
 
     owner = fields.Boolean(
         attribute="owner",
@@ -92,21 +100,25 @@ class ManagerSchema(MemberSchema):
     )
 
 
-class GroupMutableFieldsSchema(Schema):
-    """The fields schema for the mutable data by Members in a Group resource."""
+class GroupManagerSchema(GroupManagerMutableFieldsSchema, UserGroupBaseSchema):
+    """The schema for a Group Manager"""
 
+
+class GroupMutableFieldsSchema(Schema):
+    """The fields schema for the mutable data by GroupMembers in a Group."""
+
+    name = fields.String(
+        attribute="name", metadata=dict(description="Name of the Group.")
+    )
     members = fields.Nested(
-        MemberSchema,
+        GroupMemberSchema,
         attribute="members",
-        metadata=dict(description="A list of Members in a Group."),
+        metadata=dict(description="A list of GroupMembers in a Group."),
         many=True,
         dump_only=True,
     )
-    name = fields.String(
-        attribute="name", metadata=dict(description="Name of the Group resource.")
-    )
     managers = fields.Nested(
-        ManagerSchema,
+        GroupManagerSchema,
         attribute="managers",
         metadata=dict(description="A list of Managers in a Group."),
         many=True,
@@ -114,12 +126,15 @@ class GroupMutableFieldsSchema(Schema):
     )
 
 
-class GroupSchema(GroupMutableFieldsSchema):  # type: ignore
+class GroupSchema(GroupMutableFieldsSchema):
     """The schema for the data stored in a Group resource."""
+
+    from dioptra.restapi.v1.users.schema import UserRefSchema
 
     id = fields.Integer(
         attribute="id",
         metadata=dict(description="ID for the Group resource."),
+        dump_only=True,
     )
     user = fields.Nested(
         UserRefSchema,
@@ -139,19 +154,20 @@ class GroupSchema(GroupMutableFieldsSchema):  # type: ignore
         ),
         dump_only=True,
     )
-    resources = fields.Url(
-        attribute="resources",
-        metadata=dict(
-            description="A url pointing to a list of Resourcess associated with the Group."
-        ),
-        relative=True,
-        dump_only=True,
+
+
+class GroupPageSchema(BasePageSchema):
+    """The paged schema for the data stored in a Group resource."""
+
+    data = fields.Nested(
+        GroupSchema,
+        many=True,
+        metadata=dict(description="List of Group resources in the current page."),
     )
-    tags = fields.Url(
-        attribute="tags",
-        metadata=dict(
-            description="A url pinting to a list of Tags associated with the Group."
-        ),
-        relative=True,
-        dump_only=True,
-    )
+
+
+class GroupGetQueryParameters(
+    PagingQueryParametersSchema,
+    SearchQueryParametersSchema,
+):
+    """The query parameters for the GET method of the /groups endpoint."""

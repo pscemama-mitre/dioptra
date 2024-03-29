@@ -130,7 +130,13 @@ def generate_base_resource_ref_schema(
     return Schema.from_dict(schema, name="f{name}RefBaseSchema")
 
 
-SnapshotRefSchema = generate_base_resource_ref_schema("Snapshot", keep_snapshot_id=True)
+class IdSchema(Schema):
+    """A generic schema for providing an ID."""
+
+    id = fields.Integer(
+        attribute="id",
+        metadata=dict(description="A unique identifier."),
+    )
 
 
 class ResourceUrlsSchema(Schema):
