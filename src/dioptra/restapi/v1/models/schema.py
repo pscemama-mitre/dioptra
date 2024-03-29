@@ -34,11 +34,12 @@ class RegisteredModelSchema(Schema):
     modelId = fields.Integer(
         attribute="model_id",
         metadata=dict(description="The ID of the associated Model resource."),
+        dump_only=True,
     )
-
     versionNumber = fields.Integer(
         attribute="version_number",
         metadata=dict(description="The version number of the Registered Model."),
+        dump_only=True,
     )
     artifact = fields.Nested(
         ArtifactRefSchema,
@@ -53,8 +54,7 @@ class RegisteredModelPageSchema(BasePageSchema):
         RegisteredModelSchema,
         many=True,
         metadata=dict(
-            description="List of Registered Model resources in the \
-                                   current page."
+            description="List of Registered Model resources in the current page."
         ),
     )
 
@@ -63,8 +63,7 @@ class RegisteredModelGetQueryParameters(
     PagingQueryParametersSchema,
     SearchQueryParametersSchema,
 ):
-    """The query parameters for the GET method of the
-    /models/{id}/versions endpoint."""
+    """The query parameters for the GET method of the /models/{id}/versions endpoint."""
 
 
 ModelBaseSchema = generate_base_resource_schema("Model", snapshot=False)
