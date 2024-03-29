@@ -80,7 +80,7 @@ class ModelIdEndpoint(Resource):
 @api.param("id", "ID for the Model resource.")
 class ModelIdVersionsEndpoint(Resource):
     @login_required
-    @responds(schema=RegisteredModelSchema, api=api)
+    @responds(schema=RegisteredModelSchema(many=True), api=api)
     def get(self, id: int):
         """Gets all versions (RegisteredModels) of a Model resource."""
         log = LOGGER.new(
