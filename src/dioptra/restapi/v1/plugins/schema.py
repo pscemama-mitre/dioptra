@@ -157,6 +157,12 @@ class PluginFileMutableFieldsSchema(Schema):
     contents = fields.String(
         attribute="contents", metadata=dict(description="Contents of the file.")
     )
+    tasks = fields.Nested(
+        PluginTaskSchema,
+        attribute="tasks",
+        metadata=dict(description="Tasks associated with the PluginFile resource."),
+        many=True,
+    )
 
 
 class PluginFileSchema(PluginFileMutableFieldsSchema, PluginFileBaseSchema):  # type: ignore
@@ -165,14 +171,6 @@ class PluginFileSchema(PluginFileMutableFieldsSchema, PluginFileBaseSchema):  # 
     pluginId = fields.Int(
         attribute="plugin_id",
         metadata=dict(description="ID for the Plugin resource this file belongs to."),
-        dump_only=True,
-    )
-
-    tasks = fields.Nested(
-        PluginTaskSchema,
-        attribute="tasks",
-        metadata=dict(description="Tasks associated with the PluginFile resource."),
-        many=True,
         dump_only=True,
     )
 
